@@ -1,2 +1,2 @@
 # applicable
-Implementation of apply(callable, iterable)
+C++ implementation of apply(callable, iterable)
