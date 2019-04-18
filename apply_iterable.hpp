@@ -8,6 +8,20 @@
 #include <tuple>
 
 namespace app {
+  template <class T, class Enable = void>
+  struct is_random_access_container : std::false_type
+  {};
+  template <class T>
+  struct is_random_access_container<T,
+      std::enable_if_t<
+	std::is_convertible_v<
+	  typename std::iterator_traits<decltype(std::begin(std::declval<T>()))>::iterator_category,
+	  std::random_access_iterator_tag>>>
+    : std::true_type
+  {};
+  template <class T>
+  constexpr bool is_random_access_container_v = is_random_access_container<T>::value;
+  
   template <unsigned size, class Func, class RandomAccessible,
 	    class Tuple, std::size_t... I1, std::size_t... I2
 	    >
@@ -19,8 +33,10 @@ namespace app {
     else
       return func(std::get<I1>(std::forward<Tuple>(args))..., elements[I2]...);
   }
-  template <unsigned size, class Func, class RandomAccessible, class ...Args,
-	    class Type = decltype(std::declval<RandomAccessible>()[1])>
+  template <unsigned size, class Func, class RandomAccessible, class ...Args
+	    , class Enable = std::enable_if_t<
+		is_random_access_container_v<RandomAccessible>>
+	    >
   auto apply_n(Func func, std::tuple<Args...> && args,
 	       RandomAccessible && elements)
   {
