@@ -5,8 +5,8 @@ This library allows passing all elements of a container as parameters of a varia
 
 It allows to do in  C++ what is achieved in Python by:
 ```python
-   def apply(func, tup, elements):
-      func(*tup, *elements);
+def apply(func, tup, elements):
+   func(*tup, *elements);
 ```    
 ## Interface
 The app::apply function can be used by calling 
@@ -30,19 +30,19 @@ app::apply<1,3>(std::fprintf, std::make_tuple(stdout, "%d,%d,%d\n"), int_element
 ```
 and with move only objects:
 ```c++
-    std::array<std::unique_ptr<int>, 2> ptrs{std::make_unique<int>(1),
-                                    std::make_unique<int>(2)};
-    std::array<std::unique_ptr<int>, 2> ptrs2{std::make_unique<int>(1),
-                                    std::make_unique<int>(2)};
-    std::vector<std::unique_ptr<int>> target;
-    auto move_pointers = [&target](auto && ...ptrs) {
-         int x[] = {
-                    (target.emplace_back(std::forward<decltype(ptrs)>(ptrs)),
-                     0)...
-         };
-    };
+std::array<std::unique_ptr<int>, 2> ptrs{std::make_unique<int>(1),
+                                         std::make_unique<int>(2)};
+std::array<std::unique_ptr<int>, 2> ptrs2{std::make_unique<int>(1),
+                                         std::make_unique<int>(2)};
+std::vector<std::unique_ptr<int>> target;
+auto move_pointers = [&target](auto && ...ptrs) {
+     int x[] = {
+                (target.emplace_back(std::forward<decltype(ptrs)>(ptrs)),
+                 0)...
+     };
+};
 
-    app::apply<2,2>(move_pointers, std::tuple{}, std::move(ptrs)); // OK
-    app::apply<2,2>(move_pointers, std::tuple{}, ptrs2); // error
+app::apply<2,2>(move_pointers, std::tuple{}, std::move(ptrs)); // OK
+app::apply<2,2>(move_pointers, std::tuple{}, ptrs2); // error
 ```
 
