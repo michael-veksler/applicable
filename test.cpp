@@ -7,14 +7,15 @@
 int main()
 {
     std::vector<const char*> elements{"hello", "nice", "world"};
-    app::apply(std::printf, std::tuple{"%s %s %s\n"}, elements);
+    app::apply(std::printf, std::make_tuple("%s %s %s\n"), elements);
     std::deque<int> int_elements{1,3,0};
     app::apply<1,3>(std::fprintf, std::make_tuple(stdout, "%d,%d,%d\n"), int_elements);
     char buf[100];
+    
     const double nums[3] = { 1./9, 1./9, 1./9};
     bool had_exception = false;
     try {
-      app::apply_n<2>(std::sprintf, std::tuple{buf, "%.1f %.2f %.3f"}, nums);
+      app::apply_n<2>(std::sprintf, std::make_tuple(buf, "%.1f %.2f %.3f"), nums);
     } catch (std::runtime_error &) {
       had_exception = true;
     }
@@ -35,7 +36,7 @@ int main()
 	 };
     };
     
-    app::apply<2,2>(move_pointers, std::tuple{}, std::move(ptrs));
+    app::apply<2,2>(move_pointers, std::tuple<>{}, std::move(ptrs));
     for (auto & x: ptrs) {
       if (x) throw std::runtime_error("should be deleted");
     }
