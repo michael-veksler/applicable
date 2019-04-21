@@ -46,3 +46,4 @@ app::apply<2,2>(move_pointers, std::tuple{}, std::move(ptrs)); // OK
 app::apply<2,2>(move_pointers, std::tuple{}, ptrs2); // error
 ```
 
+NOTE: This is based on code I have posted to [stackOverflow](https://stackoverflow.com/a/55453691/4955498)
