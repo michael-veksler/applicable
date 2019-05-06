@@ -27,17 +27,17 @@ int main()
 {
     std::vector<const char*> elements{"hello", "nice", "world"};
     char buf[100];
-    app::apply(std::sprintf, std::make_tuple(buf, "%s %s %s"), elements);
+    app::expand(std::sprintf, std::make_tuple(buf, "%s %s %s"), elements);
     assertEqualStr(buf, "hello nice world");
     
     std::deque<int> int_elements{1,3,0};
-    app::apply<1,3>(std::sprintf, std::make_tuple(buf, "%d,%d,%d"), int_elements);
+    app::expand<1,3>(std::sprintf, std::make_tuple(buf, "%d,%d,%d"), int_elements);
     assertEqualStr(buf, "1,3,0");
     
     const double nums[3] = { 1./9, 1./9, 1./9};
     bool had_exception = false;
     try {
-      app::apply_n<2>(std::sprintf, std::make_tuple(buf, "%.1f %.2f %.3f"), nums);
+      app::expand_n<2>(std::sprintf, std::make_tuple(buf, "%.1f %.2f %.3f"), nums);
     } catch (std::runtime_error &) {
       had_exception = true;
     }
@@ -45,7 +45,7 @@ int main()
       throw std::runtime_error("Expecting exception");
     }
       
-    app::apply_n<3>(std::sprintf, std::make_tuple(buf, "%.1f %.2f %.3f"), nums);
+    app::expand_n<3>(std::sprintf, std::make_tuple(buf, "%.1f %.2f %.3f"), nums);
     assertEqualStr(buf, "0.1 0.11 0.111");
 
     std::array<std::unique_ptr<int>, 2> ptrs{std::make_unique<int>(1),
@@ -56,9 +56,10 @@ int main()
 		    (target.emplace_back(std::forward<decltype(ptrs)>(ptrs)),
 		     0)...
 	 };
+	 (void)x;
     };
     
-    app::apply<2,2>(move_pointers, std::tuple<>{}, std::move(ptrs));
+    app::expand<2,2>(move_pointers, std::tuple<>{}, std::move(ptrs));
     for (auto & x: ptrs) {
       if (x) throw std::runtime_error("should be deleted");
     }

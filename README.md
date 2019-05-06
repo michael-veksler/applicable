@@ -5,27 +5,27 @@ This library allows passing all elements of a container as parameters of a varia
 
 It allows to do in  C++ what is achieved in Python by:
 ```python
-def apply(func, tup, elements):
+def expand(func, tup, elements):
    func(*tup, *elements);
 ```    
 ## Interface
-The app::apply function can be used by calling 
+The app::expand function can be used by calling 
 ```c++
-app::apply(callable, tuple, random_accessible);
+app::expand(callable, tuple, random_accessible);
 ```
 or
 ```c++
-app::apply<min, max>(callable, tuple, random_accessible);
+app::expand<min, max>(callable, tuple, random_accessible);
 ``` 
 where `min` and `max` are the smallest number of expected elements in `random_accessible` and `max` is the biggest number.
 
 ## Usage examples:
 ```c++
 std::vector<const char*> elements{"first", "second", "third"};
-app::apply(std::printf, std::tuple{"%s %s %s"}, elements);
+app::expand(std::printf, std::tuple{"%s %s %s"}, elements);
 
 std::deque<int> int_elements{1,3,0};
-app::apply<1,3>(std::fprintf, std::make_tuple(stdout, "%d,%d,%d\n"), int_elements);
+app::expand<1,3>(std::fprintf, std::make_tuple(stdout, "%d,%d,%d\n"), int_elements);
 
 ```
 and with move only objects:
@@ -42,8 +42,8 @@ auto move_pointers = [&target](auto && ...ptrs) {
      };
 };
 
-app::apply<2,2>(move_pointers, std::tuple{}, std::move(ptrs)); // OK
-app::apply<2,2>(move_pointers, std::tuple{}, ptrs2); // error
+app::expand<2,2>(move_pointers, std::tuple{}, std::move(ptrs)); // OK
+app::expand<2,2>(move_pointers, std::tuple{}, ptrs2); // error
 ```
 
 NOTE: This is based on code I have posted to [stackOverflow](https://stackoverflow.com/a/55453691/4955498)
